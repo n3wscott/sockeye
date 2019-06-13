@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {{/* Using Material Design Lite from: https://code.getmdl.io/1.3.0/ */}}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Sockeye</title>
+    <link rel="shortcut icon" sizes="192x192" href="/static/assets/favicon.ico">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/static/css/material.blue-indigo.min.css" />
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="sockeye-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
+    <header class="sockeye-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
+        <div class="mdl-layout__header-row">
+            <span class="mdl-layout-title"><img class="sockeye-logo-image" src="/static/assets/sockeye-logo.png" alt="Sockeye">
+                CloudEvents Stream View
+            </span>
+        </div>
+    </header>
+    <div class="sockeye-ribbon"></div>
+
+    <main class="sockeye-main mdl-layout__content">
+
+        {{template "main.html"}}
+
+    </main>
+    <footer class="sockeye-footer mdl-mini-footer">
+        <div class="mdl-mini-footer--left-section">
+            <ul class="mdl-mini-footer--link-list">
+                <li><a href="https://github.com/n3wscott/kpax/tree/master/sockeye">source</a></li>
+            </ul>
+        </div>
+    </footer>
+</div>
+<script defer src="/static/js/material.min.js"></script>
+</body>
+</html>
