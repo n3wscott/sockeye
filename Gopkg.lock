@@ -2,16 +2,16 @@
 
 
 [[projects]]
-  digest = "1:afdd3095221c5ca4023d3c0e4f1813f9d1c5ece27735dba900fe859da52130e6"
+  digest = "1:078db1588b2eca641aadbfd9b5b913417d6a49c3af482c84688c9878d2880561"
   name = "github.com/cloudevents/sdk-go"
   packages = [
     ".",
     "pkg/cloudevents",
     "pkg/cloudevents/client",
-    "pkg/cloudevents/codec",
     "pkg/cloudevents/context",
     "pkg/cloudevents/datacodec",
     "pkg/cloudevents/datacodec/json",
+    "pkg/cloudevents/datacodec/text",
     "pkg/cloudevents/datacodec/xml",
     "pkg/cloudevents/observability",
     "pkg/cloudevents/transport",
@@ -19,8 +19,8 @@
     "pkg/cloudevents/types",
   ]
   pruneopts = "UT"
-  revision = "56931988abe3adf6792b5c6e575ee5f573e9ccbc"
-  version = "0.7.0"
+  revision = "2fa4bb1fbb4aac4d906b0173a2a408f701439b82"
+  version = "v0.10.0"
 
 [[projects]]
   digest = "1:582b704bebaa06b48c29b0cec224a6058a09c86883aaddabde889cd1a5f73e1b"
@@ -112,7 +112,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/cloudevents/sdk-go",
-    "github.com/cloudevents/sdk-go/pkg/cloudevents/codec",
     "github.com/google/uuid",
     "github.com/kelseyhightower/envconfig",
     "golang.org/x/net/websocket",
