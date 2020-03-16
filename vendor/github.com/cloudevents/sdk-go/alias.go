@@ -4,105 +4,102 @@ package cloudevents
 // the number of imports for simple HTTP clients.
 
 import (
-	"github.com/cloudevents/sdk-go/pkg/cloudevents"
-	"github.com/cloudevents/sdk-go/pkg/cloudevents/client"
-	"github.com/cloudevents/sdk-go/pkg/cloudevents/context"
-	"github.com/cloudevents/sdk-go/pkg/cloudevents/observability"
-	"github.com/cloudevents/sdk-go/pkg/cloudevents/transport/http"
-	"github.com/cloudevents/sdk-go/pkg/cloudevents/types"
+	"github.com/cloudevents/sdk-go/pkg/binding"
+	"github.com/cloudevents/sdk-go/pkg/client"
+	"github.com/cloudevents/sdk-go/pkg/context"
+	"github.com/cloudevents/sdk-go/pkg/event"
+	"github.com/cloudevents/sdk-go/pkg/observability"
+	"github.com/cloudevents/sdk-go/pkg/protocol"
+	"github.com/cloudevents/sdk-go/pkg/protocol/http"
+	"github.com/cloudevents/sdk-go/pkg/types"
 )
 
 // Client
 
 type ClientOption client.Option
 type Client = client.Client
-type ConvertFn = client.ConvertFn
 
 // Event
 
-type Event = cloudevents.Event
-type EventResponse = cloudevents.EventResponse
+type Event = event.Event
 
 // Context
 
-type EventContext = cloudevents.EventContext
-type EventContextV1 = cloudevents.EventContextV1
-type EventContextV01 = cloudevents.EventContextV01
-type EventContextV02 = cloudevents.EventContextV02
-type EventContextV03 = cloudevents.EventContextV03
+type EventContext = event.EventContext
+type EventContextV1 = event.EventContextV1
+type EventContextV03 = event.EventContextV03
 
 // Custom Types
 
 type Timestamp = types.Timestamp
-type URLRef = types.URLRef
+type URIRef = types.URIRef
 
-// HTTP Transport
+// HTTP Protocol
 
 type HTTPOption http.Option
-type HTTPTransport = http.Transport
-type HTTPTransportContext = http.TransportContext
-type HTTPTransportResponseContext = http.TransportResponseContext
-type HTTPEncoding = http.Encoding
+
+type HTTPProtocol = http.Protocol
+
+// Encoding
+
+type Encoding = binding.Encoding
 
 const (
-	// Encoding
+	// ReadEncoding
 
-	ApplicationXML                  = cloudevents.ApplicationXML
-	ApplicationJSON                 = cloudevents.ApplicationJSON
-	ApplicationCloudEventsJSON      = cloudevents.ApplicationCloudEventsJSON
-	ApplicationCloudEventsBatchJSON = cloudevents.ApplicationCloudEventsBatchJSON
-	Base64                          = cloudevents.Base64
+	ApplicationXML                  = event.ApplicationXML
+	ApplicationJSON                 = event.ApplicationJSON
+	TextPlain                       = event.TextPlain
+	ApplicationCloudEventsJSON      = event.ApplicationCloudEventsJSON
+	ApplicationCloudEventsBatchJSON = event.ApplicationCloudEventsBatchJSON
+	Base64                          = event.Base64
 
 	// Event Versions
 
-	VersionV1  = cloudevents.CloudEventsVersionV1
-	VersionV01 = cloudevents.CloudEventsVersionV01
-	VersionV02 = cloudevents.CloudEventsVersionV02
-	VersionV03 = cloudevents.CloudEventsVersionV03
+	VersionV1  = event.CloudEventsVersionV1
+	VersionV03 = event.CloudEventsVersionV03
 
-	// HTTP Transport Encodings
+	// Encoding
 
-	HTTPBinaryV1      = http.BinaryV1
-	HTTPStructuredV1  = http.StructuredV1
-	HTTPBatchedV1     = http.BatchedV1
-	HTTPBinaryV01     = http.BinaryV01
-	HTTPStructuredV01 = http.StructuredV01
-	HTTPBinaryV02     = http.BinaryV02
-	HTTPStructuredV02 = http.StructuredV02
-	HTTPBinaryV03     = http.BinaryV03
-	HTTPStructuredV03 = http.StructuredV03
-	HTTPBatchedV03    = http.BatchedV03
-
-	// Context HTTP Transport Encodings
-
-	Binary     = http.Binary
-	Structured = http.Structured
+	EncodingBinary     = binding.EncodingBinary
+	EncodingStructured = binding.EncodingStructured
 )
 
 var (
+
 	// ContentType Helpers
 
-	StringOfApplicationJSON                 = cloudevents.StringOfApplicationJSON
-	StringOfApplicationXML                  = cloudevents.StringOfApplicationXML
-	StringOfApplicationCloudEventsJSON      = cloudevents.StringOfApplicationCloudEventsJSON
-	StringOfApplicationCloudEventsBatchJSON = cloudevents.StringOfApplicationCloudEventsBatchJSON
-	StringOfBase64                          = cloudevents.StringOfBase64
+	StringOfApplicationJSON                 = event.StringOfApplicationJSON
+	StringOfApplicationXML                  = event.StringOfApplicationXML
+	StringOfTextPlain                       = event.StringOfTextPlain
+	StringOfApplicationCloudEventsJSON      = event.StringOfApplicationCloudEventsJSON
+	StringOfApplicationCloudEventsBatchJSON = event.StringOfApplicationCloudEventsBatchJSON
+	StringOfBase64                          = event.StringOfBase64
 
 	// Client Creation
 
-	NewClient        = client.New
-	NewDefaultClient = client.NewDefault
+	NewClient             = client.New
+	NewClientObserved     = client.NewObserved
+	NewDefaultClient      = client.NewDefault
+	NewHTTPReceiveHandler = client.NewHTTPReceiveHandler
 
 	// Client Options
 
-	WithEventDefaulter = client.WithEventDefaulter
-	WithUUIDs          = client.WithUUIDs
-	WithTimeNow        = client.WithTimeNow
-	WithConverterFn    = client.WithConverterFn
+	WithEventDefaulter   = client.WithEventDefaulter
+	WithUUIDs            = client.WithUUIDs
+	WithTimeNow          = client.WithTimeNow
+	WithTracePropagation = client.WithTracePropagation()
 
 	// Event Creation
 
-	NewEvent = cloudevents.New
+	NewEvent  = event.New
+	NewResult = protocol.NewResult
+
+	NewHTTPResponse = http.NewResult
+
+	// Message Creation
+
+	ToMessage = binding.ToMessage
 
 	// Tracing
 
@@ -110,40 +107,31 @@ var (
 
 	// Context
 
-	ContextWithTarget   = context.WithTarget
-	TargetFromContext   = context.TargetFrom
-	ContextWithEncoding = context.WithEncoding
-	EncodingFromContext = context.EncodingFrom
+	ContextWithTarget      = context.WithTarget
+	TargetFromContext      = context.TargetFrom
+	WithEncodingBinary     = binding.WithForceBinary
+	WithEncodingStructured = binding.WithForceStructured
 
 	// Custom Types
 
 	ParseTimestamp = types.ParseTimestamp
-	ParseURLRef    = types.ParseURLRef
 	ParseURIRef    = types.ParseURIRef
 	ParseURI       = types.ParseURI
 
-	// HTTP Transport
+	// HTTP Protocol
 
-	NewHTTPTransport = http.New
+	NewHTTP = http.New
 
-	// HTTP Transport Options
+	// HTTP Protocol Options
 
-	WithTarget               = http.WithTarget
-	WithMethod               = http.WithMethod
-	WitHHeader               = http.WithHeader
-	WithShutdownTimeout      = http.WithShutdownTimeout
-	WithEncoding             = http.WithEncoding
-	WithContextBasedEncoding = http.WithContextBasedEncoding
-	WithBinaryEncoding       = http.WithBinaryEncoding
-	WithStructuredEncoding   = http.WithStructuredEncoding
-	WithPort                 = http.WithPort
-	WithPath                 = http.WithPath
-	WithMiddleware           = http.WithMiddleware
-	WithLongPollTarget       = http.WithLongPollTarget
-	WithListener             = http.WithListener
-
-	// HTTP Context
-
-	HTTPTransportContextFrom = http.TransportContextFrom
-	ContextWithHeader        = http.ContextWithHeader
+	WithTarget          = http.WithTarget
+	WithHeader          = http.WithHeader
+	WithShutdownTimeout = http.WithShutdownTimeout
+	//WithEncoding           = http.WithEncoding
+	//WithStructuredEncoding = http.WithStructuredEncoding // TODO: expose new way
+	WithPort          = http.WithPort
+	WithPath          = http.WithPath
+	WithMiddleware    = http.WithMiddleware
+	WithListener      = http.WithListener
+	WithHTTPTransport = http.WithHTTPTransport
 )

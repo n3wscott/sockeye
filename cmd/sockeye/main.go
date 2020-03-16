@@ -30,8 +30,7 @@ func main() {
 	c.Mux().Handle("/static/", http.StripPrefix("/static/",
 		http.FileServer(http.Dir(env.FilePath+"static"))))
 
-	t, err := cloudevents.NewHTTPTransport(
-		cloudevents.WithBinaryEncoding(),
+	t, err := cloudevents.NewHTTP(
 		cloudevents.WithPath("/ce"), // hack hack
 	)
 	if err != nil {
