@@ -82,30 +82,15 @@
 
         let p1 = document.createElement("pre");
 
-        let data = e["data"];
-        delete e["data"];
+        let data = null;
+        if (e["data"]) {
+            data = e["data"];// TODO: DATA CAN BE NIL
+            delete e["data"];
+        }
 
         p1.innerHTML = syntaxHighlight(JSON.stringify(e, null, 2));
         p1.className = "json";
         td1.appendChild(p1);
-
-        // Chips:
-        // function newChip(value, key, map) {
-        //     console.log(`m[${key}] = ${value}`);
-        //
-        //     let os = document.createElement("span");
-        //     os.className = "mdl-chip";
-        //
-        //     let is = document.createElement("span");
-        //     is.className = "mdl-chip__text";
-        //     is.innerText = `m[${key}]: ${value}`;
-        //     os.appendChild(is);
-        //
-        //     td1.appendChild(os);
-        // }
-        // new Map(Object.entries(e))
-        //     .forEach(newChip);
-
         tr.appendChild(td1);
 
         let td2 = document.createElement("td");
