@@ -52,6 +52,9 @@
     bottom: 10px;
     right: 10px;
 }
+[sockeye-connected=false] {
+    background: #9c242e !important;
+}
 
 .sockeye-footer {
     padding-left: 40px;

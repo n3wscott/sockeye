@@ -258,12 +258,25 @@
         }
         console.log("WS URL: " + wsURL);
 
-        sock = new WebSocket(wsURL);
+        sock = new ReconnectingWebSocket(wsURL);
         sock.onopen = function () {
             console.log("connected to " + wsURL);
+            let fab = document.getElementById("fab");
+            fab.setAttribute("sockeye-connected", "true")
         };
         sock.onclose = function (e) {
             console.log("connection closed (" + e.code + ")");
+            fab.setAttribute("sockeye-connected", "false")
+            //
+            // let reconnect = () => {
+            //     console.log("reconnect closed (" + sock.readyState + ")");
+            //
+            //     if (sock.readyState === WebSocket.CLOSED) {
+            //         sock.
+            //     }
+            //     setTimeout(reconnect, 1000);
+            // };
+            // setTimeout(reconnect, 1000);
         };
         sock.onmessage = function (e) {
             window.dispatchEvent(new Event('cloudevent'));
@@ -294,6 +307,7 @@
         };
 
         let fab = document.getElementById("fab");
+        fab.setAttribute("sockeye-connected", "false")
         fab.onclick = function(){
             while (main.firstChild) {
                 main.removeChild(main.firstChild);
