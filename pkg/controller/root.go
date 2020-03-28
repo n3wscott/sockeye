@@ -14,6 +14,7 @@ func (c *Controller) RootHandler(w http.ResponseWriter, r *http.Request) {
 		t, _ = template.ParseFiles(
 			c.root+"/templates/index.html",
 			c.root+"/templates/main.html",
+			c.root+"/templates/scrub.html",
 		)
 	})
 

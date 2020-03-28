@@ -106,7 +106,7 @@
         tbody.appendChild(tr)
     };
 
-    window.onload = function () {
+    window.addEventListener('load', (event) => {
         let subjects = {};
 
         let main = document.getElementsByTagName("main")[0].getElementsByClassName("sockeye-container")[0];
@@ -126,6 +126,7 @@
             console.log("connection closed (" + e.code + ")");
         };
         sock.onmessage = function (e) {
+            window.dispatchEvent(new Event('cloudevent'));
             let t = JSON.parse(JSON.parse(e.data)); // at the moment the ws sends down a double encoded thing.
 
             let key = "no-subject";
@@ -158,7 +159,8 @@
                 main.removeChild(main.firstChild);
             }
             subjects = {};
+            window.dispatchEvent(new Event('ce-clear'));
         };
 
-    };
+    });
 </script>

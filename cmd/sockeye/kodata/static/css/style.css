@@ -84,3 +84,8 @@ pre {
 .json-key {
     color: red;
 }
+
+canvas {
+    width: 100%;
+    height: 64px;
+}
