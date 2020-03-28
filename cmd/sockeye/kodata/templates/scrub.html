@@ -3,7 +3,7 @@
 <script>
 
     const xpad = 4;
-    const barColor = "#3F51B5";
+    const barColor = "#fff";//"#fff";//"#3F51B5";
 
     const normalizeData = filteredData => {
         const multiplier = Math.pow(Math.max(...filteredData), -1);
@@ -11,16 +11,15 @@
     };
 
     const makeCtxCanvas = () => {
-        const title = document.querySelector("span.mdl-layout-title");
         const canvas = document.querySelector("canvas#stream");
         const dpr = window.devicePixelRatio || 1;
         canvas.width = canvas.offsetWidth  * dpr;
         canvas.height = canvas.offsetHeight * dpr;
         const ctx = canvas.getContext("2d");
-        ctx.scale(dpr, -dpr);
-        ctx.translate(-title.offsetWidth, -canvas.offsetHeight);
+        ctx.scale(dpr, dpr);
+        ctx.translate(0, 0);//-canvas.offsetHeight);
 
-        console.log("length = " + canvas.width);
+        //console.log("length = " + canvas.width);
 
         return {ctx: ctx, canvas: canvas}
     };
@@ -60,7 +59,9 @@
 
     window.addEventListener('ce-clear', function (e) {
         currentCount = 0;
-        data = new Array(max);
+        for (let i = 0; i < max; i++) {
+            data[i] = 0;
+        }
     }, false);
 
     window.addEventListener('cloudevent', function (e) {
@@ -78,10 +79,10 @@
             draw(cc, normalizeData(data.slice()));
         }, 500);
 
-    });
+        window.addEventListener('resize', (event) => {
+            cc.ctx.clearRect(0, 0, cc.canvas.offsetWidth, cc.canvas.offsetHeight);
+        });
 
-    window.addEventListener('resize', (event) => {
-        cc.ctx.clearRect(0, 0, cc.canvas.offsetWidth, cc.canvas.offsetHeight);
     });
 
     // DEMO:

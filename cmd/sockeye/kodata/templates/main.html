@@ -33,7 +33,7 @@
 
         let th1 = document.createElement("th");
         th1.className = "mdl-data-table__cell--non-numeric";
-        th1.innerText = "Type";
+        th1.innerText = "Attributes";
         tr.appendChild(th1);
 
         let th2 = document.createElement("th");
@@ -52,7 +52,7 @@
         return c
     };
 
-    syntaxHighlight = function (json) {
+    jsonSyntaxHighlight = function (json) {
         json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
             var cls = 'json-number';
@@ -83,12 +83,22 @@
         let p1 = document.createElement("pre");
 
         let data = null;
-        if (e["data"]) {
-            data = e["data"];// TODO: DATA CAN BE NIL
+        if ("data" in e) {
+            data = e["data"];
             delete e["data"];
         }
+        let data_base64 = null;
+        if ("data_base64" in e) {
+            data_base64 = e["data_base64"];
+            delete e["data_base64"];
+        }
 
-        p1.innerHTML = syntaxHighlight(JSON.stringify(e, null, 2));
+        let mediaType = "unknown";
+        if ("datacontenttype" in e) {
+            mediaType = e["datacontenttype"]
+        }
+
+        p1.innerHTML = jsonSyntaxHighlight(vkbeautify.json(e, 1));
         p1.className = "json";
         td1.appendChild(p1);
         tr.appendChild(td1);
@@ -96,10 +106,28 @@
         let td2 = document.createElement("td");
         td2.className = "mdl-data-table__cell--non-numeric";
 
-        let p2 = document.createElement("pre");
-        p2.innerHTML = syntaxHighlight(JSON.stringify(data, null, 2));
-        p2.className = "json";
-        td2.appendChild(p2);
+        if (data_base64 !== null) {
+            data = atob(data_base64);
+        }
+
+        if (mediaType.startsWith("application/json") || mediaType.startsWith("text/json")) {
+            let p2 = document.createElement("pre");
+            p2.innerHTML = jsonSyntaxHighlight(vkbeautify.json(data, 2));
+            p2.className = "json";
+            td2.appendChild(p2);
+        } else if (mediaType.startsWith("application/xml") || mediaType.startsWith("text/xml")) {
+            let p2 = document.createElement("pre");
+            p2.innerText = vkbeautify.xml(data);
+            p2.className = "xml";
+            td2.appendChild(p2);
+        }else {
+            let p2 = document.createElement("pre");
+            p2.innerText = data;
+            p2.className = "unknown";
+            td2.appendChild(p2);
+        }
+
+
 
         tr.appendChild(td2);
 

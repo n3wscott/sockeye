@@ -16,11 +16,12 @@
     <header class="sockeye-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
         <div class="mdl-layout__header-row">
             <span class="mdl-layout-title"><img class="sockeye-logo-image" src="/static/assets/sockeye-logo.png" alt="Sockeye - CloudEvents Stream Viewer"></span>
-            {{template "scrub.html"}}
         </div>
     </header>
 
-    <div class="sockeye-ribbon"></div>
+    <div class="sockeye-ribbon">
+        {{template "scrub.html"}}
+    </div>
 
     <main class="sockeye-main mdl-layout__content">
 
@@ -35,7 +36,9 @@
         </div>
     </footer>
 </div>
+
 <script defer src="/static/js/material.min.js"></script>
+<script defer src="/static/js/vkbeautify.js"></script>
 
 </body>
 </html>
