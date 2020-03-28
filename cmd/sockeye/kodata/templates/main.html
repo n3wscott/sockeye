@@ -71,6 +71,55 @@
         });
     };
 
+    appendChip = function(p, v, dct) {
+        let chip = document.createElement("span");
+        chip.className = "mdl-chip mdl-chip--contact";
+
+        let cv = document.createElement("span");
+        cv.className = "mdl-chip__contact mdl-color--teal mdl-color-text--white";
+        cv.innerText = v;
+
+        let ct = document.createElement("span");
+        ct.className = "mdl-chip__text";
+        ct.innerText = dct;
+
+        chip.appendChild(cv);
+        chip.appendChild(ct);
+        p.appendChild(chip);
+    };
+
+    appendAttribute = function(p, n, v) {
+        if (n === "specversion" || n === "datacontenttype") {
+            return
+        }
+
+        let c = document.createElement("li");
+        c.className = "mdl-list__item ce-attribute";
+
+        let d1 = document.createElement("div");
+        d1.className = "mdl-textfield mdl-js-textfield mdl-textfield--floating-label";
+
+        let i1 = document.createElement("input");
+        i1.className = "mdl-textfield__input";
+        i1.setAttribute("type", "text");
+        i1.id = n;
+        i1.value = v;
+        //i1.disabled = true;
+
+        let l1 = document.createElement("label");
+        l1.className = "mdl-textfield__label";
+        l1.setAttribute("for", n);
+        l1.id = n;
+        l1.innerText = n;
+
+        d1.appendChild(i1);
+        d1.appendChild(l1);
+        componentHandler.upgradeElement(d1);
+
+        c.appendChild(d1);
+        p.appendChild(c);
+    };
+
     appendRow = function (t, e) {
         let tbody = t.getElementsByTagName("tbody")[0];
 
@@ -80,8 +129,8 @@
         td1.className = "mdl-data-table__cell--non-numeric";
 
 
-        let p1 = document.createElement("pre");
-
+        // let p1 = document.createElement("pre");
+        //
         let data = null;
         if ("data" in e) {
             data = e["data"];
@@ -97,11 +146,40 @@
         if ("datacontenttype" in e) {
             mediaType = e["datacontenttype"]
         }
-
-        p1.innerHTML = jsonSyntaxHighlight(vkbeautify.json(e, 1));
-        p1.className = "json";
-        td1.appendChild(p1);
+        //
+        // p1.innerHTML = jsonSyntaxHighlight(vkbeautify.json(e, 1));
+        // p1.className = "json";
+        // td1.appendChild(p1);
+        
         tr.appendChild(td1);
+
+
+        let al = document.createElement("ul");
+        al.className = "mdl-list";
+
+        appendChip(al, e["specversion"], e["datacontenttype"]);
+
+        for (const key in e) {
+            appendAttribute(al, key, e[key]);
+        }
+
+        // appendAttribute(al, "foo", "bar");
+        // appendAttribute(al, "foo2", "dhuoasdiohda iodaoi hoads hoidsaho dashio dah adiosbar");
+        // appendAttribute(al, "foo3", "bjlkadjiodasj ioadsjioadj ioadjoi joiadsjio adsjoi dasjar");
+
+        td1.appendChild(al);
+
+        //
+        // let ft = new MaterialTextfield();
+        //
+        // d1.appendChild(ft);
+
+        //
+        // <div class="mdl-textfield mdl-js-textfield">
+        //     <input class="mdl-textfield__input" type="text" id="user">
+        //     <label class="mdl-textfield__label" for="user">User name</label>
+//        </div>
+
 
         let td2 = document.createElement("td");
         td2.className = "mdl-data-table__cell--non-numeric";
@@ -131,7 +209,7 @@
 
         tr.appendChild(td2);
 
-        tbody.appendChild(tr)
+        tbody.appendChild(tr);
     };
 
     window.addEventListener('load', (event) => {

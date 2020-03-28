@@ -3,7 +3,7 @@
 <script>
 
     const xpad = 4;
-    const barColor = "#fff";//"#fff";//"#3F51B5";
+    const barColor = "#ccc";
 
     const normalizeData = filteredData => {
         const multiplier = Math.pow(Math.max(...filteredData), -1);
@@ -17,10 +17,7 @@
         canvas.height = canvas.offsetHeight * dpr;
         const ctx = canvas.getContext("2d");
         ctx.scale(dpr, dpr);
-        ctx.translate(0, 0);//-canvas.offsetHeight);
-
-        //console.log("length = " + canvas.width);
-
+        ctx.translate(0, 0);
         return {ctx: ctx, canvas: canvas}
     };
 
@@ -52,7 +49,7 @@
 
     let data = new Array(max);
     for (let i = 0; i < max; i++) {
-        data[i] = 5;
+        data[i] = 0;
     }
 
     let currentCount = 0;

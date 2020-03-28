@@ -89,3 +89,20 @@ canvas {
     width: 100%;
     height: 64px;
 }
+
+li.ce-attribute {
+    padding-bottom: 0;
+    padding-top: 0;
+    /*background: #18ffff;*/
+}
+
+.ce-attribute div {
+    padding-bottom: 0;
+    /*background: #18ffff;*/
+}
+
+.mdl-textfield__label {
+    color: #00c853;
+    height: 64px;
+    /*background: #18ffff;*/
+}
