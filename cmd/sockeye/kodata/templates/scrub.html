@@ -1,0 +1,94 @@
+<canvas id="stream" class="sockeye"></canvas>
+
+<script>
+
+    const xpad = 4;
+    const barColor = "#ccc";
+
+    const normalizeData = filteredData => {
+        const multiplier = Math.pow(Math.max(...filteredData), -1);
+        return filteredData.map(n => n * multiplier);
+    };
+
+    const makeCtxCanvas = () => {
+        const canvas = document.querySelector("canvas#stream");
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = canvas.offsetWidth  * dpr;
+        canvas.height = canvas.offsetHeight * dpr;
+        const ctx = canvas.getContext("2d");
+        ctx.scale(dpr, dpr);
+        ctx.translate(0, 0);
+        return {ctx: ctx, canvas: canvas}
+    };
+
+    const draw = (cc, normalizedData) => {
+        // draw the line segments
+        const width = cc.canvas.offsetWidth / normalizedData.length;
+        for (let i = 0; i < normalizedData.length; i++) {
+            const x = width * i;
+            let height = normalizedData[i] * cc.canvas.offsetHeight;
+            drawLineSegment(cc, x, height, width - xpad);
+        }
+    };
+
+    const drawLineSegment = (cc, x, height, width) => {
+        cc.ctx.lineWidth = 1;
+        cc.ctx.strokeStyle = barColor;
+
+        cc.ctx.clearRect(x, 0, width+xpad, cc.canvas.offsetHeight);
+
+        cc.ctx.beginPath();
+        cc.ctx.moveTo(x, 0);
+        cc.ctx.lineTo(x, height);
+        cc.ctx.lineTo(x + width, height);
+        cc.ctx.lineTo(x + width, 0);
+        cc.ctx.stroke();
+    };
+
+    const max = 300;
+
+    let data = new Array(max);
+    for (let i = 0; i < max; i++) {
+        data[i] = 0;
+    }
+
+    let currentCount = 0;
+
+    window.addEventListener('ce-clear', function (e) {
+        currentCount = 0;
+        for (let i = 0; i < max; i++) {
+            data[i] = 0;
+        }
+    }, false);
+
+    window.addEventListener('cloudevent', function (e) {
+        currentCount++;
+    }, false);
+
+    window.addEventListener('load', (event) => {
+        let cc = makeCtxCanvas();
+        setInterval(() => {
+            data.shift();
+            data[max - 1] = currentCount;
+            currentCount = 0;
+            console.log("count: " + data[max - 1]);
+            draw(cc, normalizeData(data.slice()));
+        }, 500);
+
+        window.addEventListener('resize', (event) => {
+            cc.ctx.clearRect(0, 0, cc.canvas.offsetWidth, cc.canvas.offsetHeight);
+        });
+
+    });
+
+    // DEMO:
+    /*
+    setInterval(() => {
+        if (Math.floor(Math.random() * 5) === 0) {
+            window.dispatchEvent(new Event('cloudevent'));
+        }
+    }, 1);
+    */
+
+
+</script>
