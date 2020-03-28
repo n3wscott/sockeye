@@ -96,6 +96,10 @@ li.ce-attribute {
     /*background: #18ffff;*/
 }
 
+ul.mdl-list.ce-attributes {
+    margin: 0;
+}
+
 .ce-attribute div {
     padding-bottom: 0;
     /*background: #18ffff;*/
@@ -105,4 +109,24 @@ li.ce-attribute {
     color: #00c853;
     height: 64px;
     /*background: #18ffff;*/
+}
+
+.ce-specversion {
+    background: white;
+    color: darkgray;
+    margin-left: 5px;
+}
+
+.ce-specversion .mdl-chip__contact {
+    background: lightgray;
+    color: white;
+}
+
+.mdl-data-table td, .mdl-data-table td .mdl-data-table__select {
+    vertical-align: top;
+}
+
+p.ce-data, .json-string {    word-break: break-all;
+    white-space: normal;
+
 }

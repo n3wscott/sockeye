@@ -72,20 +72,40 @@
     };
 
     appendChip = function(p, v, dct) {
-        let chip = document.createElement("span");
-        chip.className = "mdl-chip mdl-chip--contact";
+        let id = "demo-menu-lower-right";
+
+        let chip = document.createElement("button");
+        chip.className = "mdl-chip mdl-chip--contact ce-specversion";
+        chip.id = id;
 
         let cv = document.createElement("span");
-        cv.className = "mdl-chip__contact mdl-color--teal mdl-color-text--white";
+        cv.className = "mdl-chip__contact";
         cv.innerText = v;
 
         let ct = document.createElement("span");
         ct.className = "mdl-chip__text";
         ct.innerText = dct;
 
+        // chip.onclick = (event) => {
+        //     alert("chip click")
+        // };
+
+
+        let menu = document.createElement("ul");
+        menu.className = "mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect";
+        menu.setAttribute("for", id);
+        menu.innerHTML =
+        '  <li class="mdl-menu__item">Some Action</li>' +
+        '  <li class="mdl-menu__item">Another Action</li>' +
+        '  <li disabled class="mdl-menu__item">Disabled Action</li>' +
+        '  <li class="mdl-menu__item">Yet Another Action</li>';
+
+
         chip.appendChild(cv);
         chip.appendChild(ct);
         p.appendChild(chip);
+        p.appendChild(menu);
+        //componentHandler.upgradeElement(menu);
     };
 
     appendAttribute = function(p, n, v) {
@@ -128,9 +148,6 @@
         let td1 = document.createElement("td");
         td1.className = "mdl-data-table__cell--non-numeric";
 
-
-        // let p1 = document.createElement("pre");
-        //
         let data = null;
         if ("data" in e) {
             data = e["data"];
@@ -146,18 +163,15 @@
         if ("datacontenttype" in e) {
             mediaType = e["datacontenttype"]
         }
-        //
-        // p1.innerHTML = jsonSyntaxHighlight(vkbeautify.json(e, 1));
-        // p1.className = "json";
-        // td1.appendChild(p1);
-        
+
         tr.appendChild(td1);
 
+        appendChip(td1, e["specversion"], e["datacontenttype"]);
 
         let al = document.createElement("ul");
-        al.className = "mdl-list";
+        al.className = "mdl-list ce-attributes";
 
-        appendChip(al, e["specversion"], e["datacontenttype"]);
+
 
         for (const key in e) {
             appendAttribute(al, key, e[key]);
@@ -185,20 +199,40 @@
         td2.className = "mdl-data-table__cell--non-numeric";
 
         if (data_base64 !== null) {
-            data = atob(data_base64);
+            try {
+                data = atob(data_base64);
+            } catch(err) {
+                console.error(err);
+                data = data_base64;
+            }
         }
 
         if (mediaType.startsWith("application/json") || mediaType.startsWith("text/json")) {
             let p2 = document.createElement("pre");
-            p2.innerHTML = jsonSyntaxHighlight(vkbeautify.json(data, 2));
+            try {
+                p2.innerHTML = jsonSyntaxHighlight(vkbeautify.json(data, 2));
+            } catch(err) {
+                console.error(err);
+                p2.innerText = data;
+            }
             p2.className = "json";
             td2.appendChild(p2);
         } else if (mediaType.startsWith("application/xml") || mediaType.startsWith("text/xml")) {
             let p2 = document.createElement("pre");
-            p2.innerText = vkbeautify.xml(data);
+            try {
+                p2.innerHTML = jsonSyntaxHighlight(vkbeautify.xml(data));
+            } catch (err) {
+                console.error(err);
+                p2.innerText = data;
+            }
             p2.className = "xml";
             td2.appendChild(p2);
-        }else {
+        } else if ( mediaType.startsWith("text/plain")) {
+            let p2 = document.createElement("p");
+            p2.innerText = data;
+            p2.className = "ce-data";
+            td2.appendChild(p2);
+        } else {
             let p2 = document.createElement("pre");
             p2.innerText = data;
             p2.className = "unknown";
