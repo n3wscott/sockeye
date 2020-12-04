@@ -18,6 +18,7 @@ jobs:
       KO_FLAGS: --platform=all --preserve-import-paths
 
     steps:
+
     - name: Set up Go 1.15.x
       uses: actions/setup-go@v2
       with:

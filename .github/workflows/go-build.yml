@@ -10,19 +10,14 @@ jobs:
 
   build:
     name: Build
-    strategy:
-      matrix:
-        go-version: [1.15.x]
-        platform: [ubuntu-latest]
-
-    runs-on: ${{ matrix.platform }}
+    runs-on: ubuntu-latest
 
     steps:
 
     - name: Set up Go ${{ matrix.go-version }}
       uses: actions/setup-go@v2
       with:
-        go-version: ${{ matrix.go-version }}
+        go-version: 1.15.x
 
     - name: Check out code onto GOPATH
       uses: actions/checkout@v2
