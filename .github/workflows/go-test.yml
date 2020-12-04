@@ -12,28 +12,20 @@ jobs:
     name: Test
     strategy:
       matrix:
-        go-version: [1.13.x, 1.14.x]
+        go-version: [1.15.x]
         platform: [ubuntu-latest]
 
     runs-on: ${{ matrix.platform }}
 
-    env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: off
-
     steps:
 
     - name: Set up Go ${{ matrix.go-version }}
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go-version }}
-      id: go
 
     - name: Check out code onto GOPATH
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
-        path: ./src/github.com/${{ github.repository }}
 
     - name: Test
-      run: go test -race github.com/${{ github.repository }}/...
+      run: go test -race ./...

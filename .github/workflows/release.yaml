@@ -19,15 +19,9 @@ jobs:
 
     steps:
     - name: Set up Go 1.15.x
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v2
       with:
         go-version: 1.15.x
-
-    - name: Add GOPATH/bin to PATH
-      shell: bash
-      run: |
-        echo "::set-env name=GOPATH::$(go env GOPATH)"
-        echo "::add-path::$(go env GOPATH)/bin"
 
     - name: Setup ko
       run: |
