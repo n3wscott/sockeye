@@ -12,8 +12,6 @@ jobs:
     name: Release ko artifact
     runs-on: ubuntu-latest
     env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: off
       KO_DOCKER_REPO: docker.io/n3wscott
       KO_FLAGS: --platform=all --preserve-import-paths
 
