@@ -1,4 +1,6 @@
-# sockeye
+# Sockeye
+
+![Sockeye Logo](./images/sockeye-logo.png)
 
 Websocket based CloudEvents viewer.
 
