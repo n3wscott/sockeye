@@ -34,12 +34,15 @@ FILE_PATH=./cmd/sockeye/kodata go run cmd/sockeye/main.go
 
 ## Running on Kubernetes
 
-### From Release v0.5.0
+### From Release v0.6.3
 
 To install into your default namespace
+
 ```shell
-kubectl apply -f https://github.com/n3wscott/sockeye/releases/download/v0.5.0/release.yaml
+kubectl apply -f https://github.com/n3wscott/sockeye/releases/download/v0.6.3/release.yaml
 ```
+
+This artifact will work on the following linux architectures: amd64, arm, arm64, ppc64le, s390x
 
 ### From Source
 
