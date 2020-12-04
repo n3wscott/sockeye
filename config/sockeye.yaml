@@ -7,4 +7,4 @@ spec:
   template:
     spec:
       containers:
-        - image: github.com/n3wscott/sockeye/cmd/sockeye
+        - image: ko://github.com/n3wscott/sockeye/cmd/sockeye

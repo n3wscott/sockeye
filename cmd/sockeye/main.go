@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
-	cloudevents "github.com/cloudevents/sdk-go"
-	"github.com/kelseyhightower/envconfig"
-	"github.com/n3wscott/sockeye/pkg/controller"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"github.com/kelseyhightower/envconfig"
+	"github.com/n3wscott/sockeye/pkg/controller"
 )
 
 type envConfig struct {
