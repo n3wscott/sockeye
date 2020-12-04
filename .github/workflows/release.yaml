@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       KO_DOCKER_REPO: docker.io/n3wscott
-      KO_FLAGS: --platform=all --preserve-import-paths --base-import-paths
+      KO_FLAGS: --platform=all --base-import-paths
 
     steps:
 
