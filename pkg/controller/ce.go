@@ -3,7 +3,8 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	cloudevents "github.com/cloudevents/sdk-go"
+
+	cloudevents "github.com/cloudevents/sdk-go/v2"
 )
 
 func (c *Controller) CeHandler(event cloudevents.Event) {

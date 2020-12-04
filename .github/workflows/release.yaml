@@ -15,34 +15,26 @@ jobs:
       GOPATH: ${{ github.workspace }}
       GO111MODULE: off
       KO_DOCKER_REPO: docker.io/n3wscott
+      KO_FLAGS: --platform=all --preserve-import-paths
 
     steps:
-    - name: Set up Go 1.13.x
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.13.x
 
-    - name: Add GOPATH/bin to PATH
-      shell: bash
-      run: |
-        echo "::set-env name=GOPATH::$(go env GOPATH)"
-        echo "::add-path::$(go env GOPATH)/bin"
+    - name: Set up Go 1.15.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.15.x
 
     - name: Setup ko
       run: |
-        GO111MODULE=on go get github.com/google/ko/cmd/ko
+        go get github.com/google/ko/cmd/ko
         docker login -u n3wscott -p ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - name: Check out code onto GOPATH
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 1
-        path: ./src/github.com/${{ github.repository }}
 
     - name: Build and Publish images, Produce release artifact.
-      working-directory: ./src/github.com/${{ github.repository }}
       run: |
-        ko resolve --tags $(basename "${{ github.ref }}" ) -BRf config/ > release.yaml
+        ko resolve --tags $(basename "${{ github.ref }}" ) ${KO_FLAGS} -f ./config/ > release.yaml
 
     - name: Create Release
       id: create_release
@@ -62,6 +54,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./src/github.com/${{ github.repository }}/release.yaml
+        asset_path: ./release.yaml
         asset_name: release.yaml
         asset_content_type: text/plain
