@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"os"
+	"path"
 	"strings"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
@@ -13,23 +13,23 @@ import (
 )
 
 type envConfig struct {
-	FilePath string `envconfig:"FILE_PATH" default:"/var/run/ko/" required:"true"`
+	DataPath string `envconfig:"KO_DATA_PATH" default:"/var/run/ko/" required:"true"`
+	WWWPath string `envconfig:"WWW_PATH" default:"www" required:"true"`
+	Port     int    `envconfig:"PORT" default:"8080" required:"true"`
 }
 
 func main() {
 	var env envConfig
 	if err := envconfig.Process("", &env); err != nil {
-		log.Printf("[ERROR] Failed to process env var: %s", err)
-		os.Exit(1)
-	}
-	if !strings.HasSuffix(env.FilePath, "/") {
-		env.FilePath = env.FilePath + "/"
+		log.Fatalf("failed to process env var: %s", err)
 	}
 
-	c := controller.New(env.FilePath)
+	www := path.Join(env.DataPath, env.WWWPath)
+	if !strings.HasSuffix(www, "/") {
+		www = www + "/"
+	}
 
-	c.Mux().Handle("/static/", http.StripPrefix("/static/",
-		http.FileServer(http.Dir(env.FilePath+"static"))))
+	c := controller.New(www)
 
 	t, err := cloudevents.NewHTTP(
 		cloudevents.WithPath("/ce"), // hack hack
