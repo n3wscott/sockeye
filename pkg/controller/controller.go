@@ -7,6 +7,7 @@ import (
 )
 
 type Controller struct {
+	rootHandler http.Handler
 	root string
 	mux  *http.ServeMux
 	once sync.Once
