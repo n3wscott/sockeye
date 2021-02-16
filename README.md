@@ -29,10 +29,22 @@ CloudEvents formatted events.
 ## Running Locally
 
 ```shell
-FILE_PATH=./cmd/sockeye/kodata go run cmd/sockeye/main.go
+KO_DATA_PATH=./cmd/sockeye/kodata go run cmd/sockeye/main.go
 ```
 
+The UI source can be found in the
+[sockeye-react](https://github.com/n3wscott/sockeye-react) repo. These might
+merge together when the UI is ironed out.
+
 ## Running on Kubernetes
+
+### From Release v0.7.0 (experimental react.js based ui)
+
+To install into your default namespace
+
+```shell
+kubectl apply -f https://github.com/n3wscott/sockeye/releases/download/v0.7.0/release.yaml
+```
 
 ### From Release v0.6.3
 
@@ -42,7 +54,8 @@ To install into your default namespace
 kubectl apply -f https://github.com/n3wscott/sockeye/releases/download/v0.6.3/release.yaml
 ```
 
-This artifact will work on the following linux architectures: amd64, arm, arm64, ppc64le, s390x
+This artifact will work on the following linux architectures: amd64, arm, arm64,
+ppc64le, s390x
 
 ### From Source
 
