@@ -7,7 +7,6 @@ spec:
     metadata:
       annotations:
         autoscaling.knative.dev/maxScale: "1"
-        autoscaling.knative.dev/minScale: "1"
     spec:
       containers:
         - image: ko://github.com/n3wscott/sockeye/cmd/sockeye
