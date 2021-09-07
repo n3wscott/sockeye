@@ -1,20 +1,31 @@
 package controller
 
 import (
-	"golang.org/x/net/websocket"
+	"fmt"
 	"net/http"
 	"sync"
+
+	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"golang.org/x/net/websocket"
 )
 
 type Controller struct {
+	ceClient    cloudevents.Client
 	rootHandler http.Handler
-	root string
-	mux  *http.ServeMux
-	once sync.Once
+	root        string
+	mux         *http.ServeMux
+	once        sync.Once
 }
 
 func New(root string) *Controller {
-	return &Controller{root: root}
+	ceClient, err := cloudevents.NewClientHTTP()
+	if err != nil {
+		fmt.Printf("failed to create client, %v", err)
+	}
+	return &Controller{
+		root:     root,
+		ceClient: ceClient,
+	}
 }
 
 func (c *Controller) Mux() *http.ServeMux {

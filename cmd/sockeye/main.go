@@ -14,7 +14,7 @@ import (
 
 type envConfig struct {
 	DataPath string `envconfig:"KO_DATA_PATH" default:"/var/run/ko/" required:"true"`
-	WWWPath string `envconfig:"WWW_PATH" default:"www" required:"true"`
+	WWWPath  string `envconfig:"WWW_PATH" default:"www" required:"true"`
 	Port     int    `envconfig:"PORT" default:"8080" required:"true"`
 }
 
@@ -46,6 +46,10 @@ func main() {
 		c.RootHandler(w, r)
 	})
 	t.Handler = c.Mux()
+
+	c.Mux().HandleFunc("/inject", func(w http.ResponseWriter, r *http.Request) {
+		c.InjectionHandler(w, r)
+	})
 
 	ce, err := cloudevents.NewClient(t, cloudevents.WithUUIDs(), cloudevents.WithTimeNow())
 	if err != nil {
