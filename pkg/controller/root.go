@@ -21,19 +21,7 @@ func (c *Controller) RootHandler(w http.ResponseWriter, r *http.Request) {
 	c.rootHandler.ServeHTTP(w, r)
 }
 
-type injectionPayload struct {
-	Data    string `json:"data"`
-	Headers struct {
-		CeID          string `json:"Ce-Id"`
-		CeSpecversion string `json:"Ce-Specversion"`
-		CeType        string `json:"Ce-Type"`
-		CeSource      string `json:"Ce-Source"`
-		ContentType   string `json:"Content-Type"`
-	} `json:"headers"`
-}
-
 func (c *Controller) InjectionHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("injected")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	json.NewEncoder(w).Encode("OKOK")
@@ -56,7 +44,7 @@ func (c *Controller) InjectionHandler(w http.ResponseWriter, r *http.Request) {
 	eventToSend.SetDataContentType(ip.Headers.ContentType)
 	eventToSend.SetData(cloudevents.ApplicationJSON, ip.Data)
 
-	ctx := cloudevents.ContextWithTarget(context.Background(), "localhost:8080")
+	ctx := cloudevents.ContextWithTarget(context.Background(), ip.Destination)
 
 	if result := c.ceClient.Send(ctx, eventToSend); cloudevents.IsUndelivered(result) {
 		fmt.Printf("failed to send, %v", result)
