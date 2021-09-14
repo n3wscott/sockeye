@@ -28,6 +28,14 @@ CloudEvents formatted events.
 
 ## Running Locally
 
+To run sockeye locally, you must export the following environment variables:
+```shell
+export KUBE_CONFIG_LOCATION=/path/to/kubeconfig
+export CLUSTER_NAME=cluster-name
+```
+An optional environment variable `NAMESPACE` can be used to specify the namespace to work out of (mostly for development purposes).
+If is not set it will default to reading the namespace from the file located at `/var/run/secrets/kubernetes.io/serviceaccount/namespace`.
+
 ```shell
 KO_DATA_PATH=./cmd/sockeye/kodata go run cmd/sockeye/main.go
 ```

@@ -13,9 +13,13 @@ import (
 )
 
 type envConfig struct {
-	DataPath string `envconfig:"KO_DATA_PATH" default:"/var/run/ko/" required:"true"`
-	WWWPath  string `envconfig:"WWW_PATH" default:"www" required:"true"`
-	Port     int    `envconfig:"PORT" default:"8080" required:"true"`
+	DataPath           string `envconfig:"KO_DATA_PATH" default:"/var/run/ko/" required:"true"`
+	WWWPath            string `envconfig:"WWW_PATH" default:"www" required:"true"`
+	Port               int    `envconfig:"PORT" default:"8080" required:"true"`
+	KubeConfigLocation string `envconfig:"KUBE_CONFIG_LOCATION" required:"true"`
+	// TODO: Make self aware of the cluster namespace
+	ClusterName string `envconfig:"CLUSTER_NAME" required:"true"`
+	Namespace   string `envconfig:"NAMESPACE" required:"false"`
 }
 
 func main() {
@@ -29,7 +33,7 @@ func main() {
 		www = www + "/"
 	}
 
-	c := controller.New(www)
+	c := controller.New(www, env.KubeConfigLocation, env.ClusterName, &env.Namespace)
 
 	t, err := cloudevents.NewHTTP(
 		cloudevents.WithPath("/ce"), // hack hack
@@ -49,6 +53,10 @@ func main() {
 
 	c.Mux().HandleFunc("/inject", func(w http.ResponseWriter, r *http.Request) {
 		c.InjectionHandler(w, r)
+	})
+
+	c.Mux().HandleFunc("/queryservices", func(w http.ResponseWriter, r *http.Request) {
+		c.QueryServicesHandler(w, r)
 	})
 
 	ce, err := cloudevents.NewClient(t, cloudevents.WithUUIDs(), cloudevents.WithTimeNow())

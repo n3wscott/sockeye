@@ -3,28 +3,52 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"sync"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+	servingclientset "knative.dev/serving/pkg/client/clientset/versioned"
+
 	"golang.org/x/net/websocket"
 )
 
 type Controller struct {
-	ceClient    cloudevents.Client
-	rootHandler http.Handler
-	root        string
-	mux         *http.ServeMux
-	once        sync.Once
+	ceClient      cloudevents.Client
+	rootHandler   http.Handler
+	root          string
+	mux           *http.ServeMux
+	once          sync.Once
+	namespace     string
+	servingClient *servingclientset.Clientset
 }
 
-func New(root string) *Controller {
+func New(root, kubeConfigLocation, cluster string, namespace *string) *Controller {
 	ceClient, err := cloudevents.NewClientHTTP()
 	if err != nil {
 		fmt.Printf("failed to create client, %v", err)
 	}
+
+	if namespace == nil {
+		namespace, err = returnNamespace()
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	config, err := BuildClientConfig(kubeConfigLocation, cluster)
+	if err != nil {
+		panic(err)
+	}
+
+	servingClient := servingclientset.NewForConfigOrDie(config)
+
 	return &Controller{
-		root:     root,
-		ceClient: ceClient,
+		root:          root,
+		ceClient:      ceClient,
+		namespace:     *namespace,
+		servingClient: servingClient,
 	}
 }
 
@@ -37,4 +61,35 @@ func (c *Controller) Mux() *http.ServeMux {
 	})
 
 	return c.mux
+}
+
+func returnNamespace() (*string, error) {
+	dat, err := os.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
+	if err != nil {
+		fmt.Println("Error reading file:", err)
+		return nil, err
+	}
+	fmt.Printf("found namespace %v ", string(dat))
+	s := string(dat)
+	return &s, nil
+}
+
+// BuildClientConfig builds the client config specified by the config path and the cluster name
+func BuildClientConfig(kubeConfigPath string, clusterName string) (*rest.Config, error) {
+
+	if cfg, err := clientcmd.BuildConfigFromFlags("", ""); err == nil {
+		// success!
+		return cfg, nil
+	}
+	// try local...
+
+	overrides := clientcmd.ConfigOverrides{}
+	// Override the cluster name if provided.
+	if clusterName != "" {
+		overrides.Context.Cluster = clusterName
+	}
+
+	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeConfigPath},
+		&overrides).ClientConfig()
 }
