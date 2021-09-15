@@ -12,6 +12,6 @@ spec:
         - image: ko://github.com/n3wscott/sockeye/cmd/sockeye
           env:
             - name: CLUSTER_NAME
-              value: arn:aws:eks:eu-central-1:043455440429:cluster/staging
+              value: <cluster_name>
             - name: NAMESPACE
-              value: midimansland
+              value: <namespace>
