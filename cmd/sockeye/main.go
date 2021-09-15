@@ -13,10 +13,9 @@ import (
 )
 
 type envConfig struct {
-	DataPath           string `envconfig:"KO_DATA_PATH" default:"/var/run/ko/" required:"true"`
-	WWWPath            string `envconfig:"WWW_PATH" default:"www" required:"true"`
-	Port               int    `envconfig:"PORT" default:"8080" required:"true"`
-	KubeConfigLocation string `envconfig:"KUBE_CONFIG_LOCATION" required:"true"`
+	DataPath string `envconfig:"KO_DATA_PATH" default:"/var/run/ko/" required:"true"`
+	WWWPath  string `envconfig:"WWW_PATH" default:"www" required:"true"`
+	Port     int    `envconfig:"PORT" default:"8080" required:"true"`
 	// TODO: Make self aware of the cluster namespace
 	ClusterName string `envconfig:"CLUSTER_NAME" required:"true"`
 	Namespace   string `envconfig:"NAMESPACE" required:"false"`
@@ -33,7 +32,7 @@ func main() {
 		www = www + "/"
 	}
 
-	c := controller.New(www, env.KubeConfigLocation, env.ClusterName, &env.Namespace)
+	c := controller.New(www, "/kodata/creds/config", env.ClusterName, &env.Namespace)
 
 	t, err := cloudevents.NewHTTP(
 		cloudevents.WithPath("/ce"), // hack hack

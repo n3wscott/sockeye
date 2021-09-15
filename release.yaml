@@ -1,3 +1,4 @@
+
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
@@ -9,9 +10,11 @@ spec:
         autoscaling.knative.dev/maxScale: "1"
     spec:
       containers:
-        - image: ko://github.com/n3wscott/sockeye/cmd/sockeye
+        - image: gcr.io/fit-stream-305821/sockeye-e92784dbbc40447852d8e5fa42eed6b4@sha256:ca41e1fc1a43fa904dfe67743ea31b70ab5a15b03ca21669ffe59f252e961901
           env:
             - name: CLUSTER_NAME
               value: arn:aws:eks:eu-central-1:043455440429:cluster/staging
             - name: NAMESPACE
               value: midimansland
+
+---
