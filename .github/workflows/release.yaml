@@ -30,6 +30,10 @@ jobs:
     - name: Check out code onto GOPATH
       uses: actions/checkout@v2
 
+    - name: Build the frontend and update the static content
+      run: |
+        make update-static
+
     - name: Build and Publish images, Produce release artifact.
       run: |
         ko resolve --tags $(basename "${{ github.ref }}" ) ${KO_FLAGS} -f ./config/ > release.yaml
