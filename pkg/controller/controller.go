@@ -24,22 +24,20 @@ type Controller struct {
 	servingClient *servingclientset.Clientset
 }
 
-func New(root, kubeConfigLocation, cluster string, namespace *string) *Controller {
+func New(root, kubeConfigLocation, cluster string) *Controller {
 	ceClient, err := cloudevents.NewClientHTTP()
 	if err != nil {
 		fmt.Printf("failed to create client, %v", err)
 	}
 
-	if namespace == nil {
-		namespace, err = returnNamespace()
-		if err != nil {
-			panic(err)
-		}
+	namespace, err := returnNamespace()
+	if err != nil {
+		fmt.Printf("Error fetching namespace: %v", err)
 	}
 
 	config, err := BuildClientConfig(kubeConfigLocation, cluster)
 	if err != nil {
-		panic(err)
+		fmt.Printf("Error building kube client: %v", err)
 	}
 
 	servingClient := servingclientset.NewForConfigOrDie(config)
@@ -47,7 +45,7 @@ func New(root, kubeConfigLocation, cluster string, namespace *string) *Controlle
 	return &Controller{
 		root:          root,
 		ceClient:      ceClient,
-		namespace:     *namespace,
+		namespace:     namespace,
 		servingClient: servingClient,
 	}
 }
@@ -63,15 +61,15 @@ func (c *Controller) Mux() *http.ServeMux {
 	return c.mux
 }
 
-func returnNamespace() (*string, error) {
+func returnNamespace() (string, error) {
 	dat, err := os.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
 	if err != nil {
 		fmt.Println("Error reading file:", err)
-		return nil, err
+		return "", err
 	}
 	fmt.Printf("found namespace %v ", string(dat))
 	s := string(dat)
-	return &s, nil
+	return s, nil
 }
 
 // BuildClientConfig builds the client config specified by the config path and the cluster name

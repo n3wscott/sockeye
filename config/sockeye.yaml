@@ -1,3 +1,37 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sockeye
+  namespace: <namespace>
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: sockeye
+  namespace: <namespace>
+rules:
+  - apiGroups:
+      - serving.knative.dev
+    resources:
+      - services
+      - routes
+    verbs:
+      - get
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: sockeye
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: sockeye
+subjects:
+  - kind: ServiceAccount
+    name: sockeye
+    namespace: <namespace>
+---
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
@@ -8,10 +42,9 @@ spec:
       annotations:
         autoscaling.knative.dev/maxScale: "1"
     spec:
+      serviceAccountName: sockeye
       containers:
         - image: ko://github.com/n3wscott/sockeye/cmd/sockeye
           env:
             - name: CLUSTER_NAME
-              value: <cluster_name>
-            - name: NAMESPACE
-              value: <namespace>
+              value: <clustername>

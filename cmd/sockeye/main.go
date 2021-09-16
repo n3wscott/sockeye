@@ -32,7 +32,7 @@ func main() {
 		www = www + "/"
 	}
 
-	c := controller.New(www, "./kodata/creds/config", env.ClusterName, &env.Namespace)
+	c := controller.New(www, "./kodata/creds/config", env.ClusterName)
 
 	t, err := cloudevents.NewHTTP(
 		cloudevents.WithPath("/ce"), // hack hack
