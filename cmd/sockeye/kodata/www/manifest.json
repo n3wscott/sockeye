@@ -1,6 +1,6 @@
 {
-  "short_name": "Sockeye",
-  "name": "Sockeye CloudEvents Viewer",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",

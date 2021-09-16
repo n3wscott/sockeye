@@ -1,0 +1,82 @@
+{
+  "name": "react-json-pretty",
+  "version": "2.2.0",
+  "description": "A code formatting tool for raw json data",
+  "main": "dist/JSONPretty.js",
+  "typings": "types/JSONPretty.d.ts",
+  "files": [
+    "dist",
+    "themes",
+    "types",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "jest --verbose=true --coverage",
+    "build": "mkdir -p dist && mkdir -p themes && npm run build-styl && npm run build-jsx",
+    "lint": "tslint --project tsconfig.json --config tslint.json './src/**/*.tsx'",
+    "precommit": "npm run build && npm run lint",
+    "prepush": "npm test",
+    "release": "standard-version",
+    "patch": "npm run release -- --release-as patch",
+    "build-styl-monikai": "stylus --compress < src/monikai.styl > themes/monikai.css",
+    "build-styl-1337": "stylus --compress < src/1337.styl > themes/1337.css",
+    "build-styl-acai": "stylus --compress < src/acai.styl > themes/acai.css",
+    "build-styl-adventure": "stylus --compress < src/adventure_time.styl > themes/adventure_time.css",
+    "build-styl": "npm run build-styl-monikai && npm run build-styl-1337 && npm run build-styl-acai && npm run build-styl-adventure",
+    "build-jsx": "tsc -p tsconfig.json"
+  },
+  "keywords": [
+    "react",
+    "json",
+    "format",
+    "pretty",
+    "react-component"
+  ],
+  "author": "chenckang@gmail.com",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=15.0",
+    "react-dom": ">=15.0"
+  },
+  "devDependencies": {
+    "@types/enzyme": "^3.1.15",
+    "@types/enzyme-adapter-react-16": "^1.0.3",
+    "@types/jest": "^23.3.11",
+    "@types/prop-types": "^15.5.8",
+    "@types/react": "^16.7.18",
+    "@types/react-dom": "^16.0.11",
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.9.1",
+    "enzyme-to-json": "^3.3.5",
+    "husky": "^1.3.1",
+    "jest": "^24.5.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "react-test-renderer": "^16.7.0",
+    "standard-version": "^4.4.0",
+    "stylus": "^0.54.5",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.12.0",
+    "typescript": "^3.2.2",
+    "webpack": "^4.28.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chenckang/react-json-pretty"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.2"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "**.jsx",
+      "src/**.js"
+    ],
+    "coverageDirectory": "tests",
+    "coverageReporters": [
+      "lcov"
+    ]
+  }
+}
