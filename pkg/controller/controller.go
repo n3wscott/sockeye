@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	servingclientset "knative.dev/serving/pkg/client/clientset/versioned"
@@ -22,6 +23,7 @@ type Controller struct {
 	once          sync.Once
 	namespace     string
 	servingClient *servingclientset.Clientset
+	dC            dynamic.Interface
 }
 
 func New(root, kubeConfigLocation, cluster string) *Controller {
@@ -42,11 +44,14 @@ func New(root, kubeConfigLocation, cluster string) *Controller {
 
 	servingClient := servingclientset.NewForConfigOrDie(config)
 
+	dc := dynamic.NewForConfigOrDie(config)
+
 	return &Controller{
 		root:          root,
 		ceClient:      ceClient,
 		namespace:     namespace,
 		servingClient: servingClient,
+		dC:            dc,
 	}
 }
 
