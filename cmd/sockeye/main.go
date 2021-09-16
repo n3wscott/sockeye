@@ -19,6 +19,7 @@ type envConfig struct {
 	// TODO: Make self aware of the cluster namespace
 	ClusterName string `envconfig:"CLUSTER_NAME" required:"true"`
 	Namespace   string `envconfig:"NAMESPACE" required:"false"`
+	User        string `envconfig:"USER" required:"false"`
 }
 
 func main() {
@@ -32,7 +33,7 @@ func main() {
 		www = www + "/"
 	}
 
-	c := controller.New(www, "./kodata/creds/config", env.ClusterName)
+	c := controller.New(www, "/Users/"+env.User+"/.kube/config", env.ClusterName)
 
 	t, err := cloudevents.NewHTTP(
 		cloudevents.WithPath("/ce"), // hack hack

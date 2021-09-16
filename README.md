@@ -28,14 +28,21 @@ CloudEvents formatted events.
 
 ## Running Locally
 
+### Running the backend
+
 ```shell
 KO_DATA_PATH=./cmd/sockeye/kodata go run cmd/sockeye/main.go
 ```
-*note:* the CE injection portion will not populate the avalible services running locally. 
 
-The UI source can be found in the
-[sockeye-react](https://github.com/n3wscott/sockeye-react) repo. These might
-merge together when the UI is ironed out.
+### Running the frontend
+*note:* you will have to update the URL that contacts the backend to reflect a port
+of `8080` (specifically the calls to `ws://` and `/inject` located in the `App.js` file). 
+
+```shell
+cd frontend
+yarn install
+yarn start
+```
 
 ## Running on Kubernetes
 
