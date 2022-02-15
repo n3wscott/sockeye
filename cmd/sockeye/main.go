@@ -14,7 +14,7 @@ import (
 
 type envConfig struct {
 	DataPath string `envconfig:"KO_DATA_PATH" default:"/var/run/ko/" required:"true"`
-	WWWPath string `envconfig:"WWW_PATH" default:"www" required:"true"`
+	WWWPath  string `envconfig:"WWW_PATH" default:"www" required:"true"`
 	Port     int    `envconfig:"PORT" default:"8080" required:"true"`
 }
 
@@ -33,6 +33,7 @@ func main() {
 
 	t, err := cloudevents.NewHTTP(
 		cloudevents.WithPath("/ce"), // hack hack
+		cloudevents.WithPort(env.Port),
 	)
 	if err != nil {
 		log.Fatalf("failed to create cloudevents transport, %s", err.Error())
