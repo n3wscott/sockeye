@@ -64,7 +64,8 @@ class WebSocketManager {
     }
 
     try {
-      const wsUrl = `ws://localhost:8080/ws`;
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/ws`;
       console.log('WebSocketManager: Connecting to:', wsUrl);
 
       this.ws = new ReconnectingWebSocket(wsUrl, [], {
