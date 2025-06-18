@@ -75,7 +75,12 @@ jobs:
           echo "Building with tag: $TAG"
           
           # Build and push with ko
-          IMAGE_DIGEST=$(ko build --tags="$TAG" --platform=all --base-import-paths ./cmd/sockeye)
+          IMAGE_REF=$(ko build --tags="$TAG" --platform=all --base-import-paths ./cmd/sockeye)
+          echo "Full image reference: $IMAGE_REF"
+          
+          # Extract just the digest part (after @)
+          IMAGE_DIGEST=$(echo "$IMAGE_REF" | sed 's/.*@//')
+          echo "Extracted digest: $IMAGE_DIGEST"
           echo "image-digest=$IMAGE_DIGEST" >> $GITHUB_OUTPUT
           
           # Generate release artifact
