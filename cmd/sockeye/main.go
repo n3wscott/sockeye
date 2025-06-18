@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"path"
@@ -14,7 +15,7 @@ import (
 
 type envConfig struct {
 	DataPath string `envconfig:"KO_DATA_PATH" default:"/var/run/ko/" required:"true"`
-	WWWPath  string `envconfig:"WWW_PATH" default:"www" required:"true"`
+	WWWPath  string `envconfig:"WWW_PATH" default:""`
 	Port     int    `envconfig:"PORT" default:"8080" required:"true"`
 }
 
@@ -30,6 +31,9 @@ func main() {
 	}
 
 	c := controller.New(www)
+
+	fmt.Printf("Listening on port %d\n", env.Port)
+	fmt.Printf("Data path: %s\n", www)
 
 	t, err := cloudevents.NewHTTP(
 		cloudevents.WithPath("/ce"), // hack hack
