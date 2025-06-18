@@ -1,16 +1,17 @@
 package controller
 
 import (
-	"golang.org/x/net/websocket"
 	"net/http"
 	"sync"
+
+	"golang.org/x/net/websocket"
 )
 
 type Controller struct {
 	rootHandler http.Handler
-	root string
-	mux  *http.ServeMux
-	once sync.Once
+	root        string
+	mux         *http.ServeMux
+	once        sync.Once
 }
 
 func New(root string) *Controller {

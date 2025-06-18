@@ -1,9 +1,10 @@
 package controller
 
 import (
+	"log"
+
 	"github.com/google/uuid"
 	"golang.org/x/net/websocket"
-	"log"
 )
 
 var (
