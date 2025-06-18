@@ -86,14 +86,6 @@ jobs:
           # Generate release artifact
           ko resolve --tags="$TAG" --platform=all --base-import-paths -f ./config/ > release.yaml
 
-      # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built.
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-          subject-digest: ${{ steps.push.outputs.image-digest }}
-          push-to-registry: true
-
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
