@@ -1,57 +1,97 @@
+name: Create and publish container image
+
+# Configures this workflow to run every time a tag is pushed
 on:
   push:
-    # Sequence of patterns matched against refs/tags
     tags:
     - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
-name: Create Release
+# Defines environment variables for the workflow
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
+# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
-
-  ko-resolve:
-    name: Release ko artifact
+  build-and-push-image:
     runs-on: ubuntu-latest
-    env:
-      KO_DOCKER_REPO: docker.io/n3wscott
-      KO_FLAGS: --platform=all --base-import-paths
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: write
+      packages: write
+      attestations: write
+      id-token: write
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Go 1.15.x
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.15.x
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
 
-    - name: Setup ko
-      run: |
-        go get github.com/google/ko/cmd/ko
-        docker login -u n3wscott -p ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: ui/yarn.lock
 
-    - name: Check out code onto GOPATH
-      uses: actions/checkout@v2
+      - name: Install UI dependencies
+        working-directory: ui
+        run: yarn install --frozen-lockfile
 
-    - name: Build and Publish images, Produce release artifact.
-      run: |
-        ko resolve --tags $(basename "${{ github.ref }}" ) ${KO_FLAGS} -f ./config/ > release.yaml
+      - name: Build UI
+        run: ./hack/update-ui.sh
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: true
+      # Uses the `docker/login-action` action to log in to the Container registry using the account and password that will publish the packages.
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./release.yaml
-        asset_name: release.yaml
-        asset_content_type: text/plain
+      # This step uses docker/metadata-action to extract tags and labels that will be applied to the specified image.
+      - name: Extract metadata (tags, labels) for container
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Setup ko
+        uses: ko-build/setup-ko@v0.7
+
+      # This step uses ko to build the image and push it to GitHub Packages.
+      - name: Build and push container image with ko
+        id: push
+        env:
+          KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          # Extract the tag from metadata (ko expects just the tag, not full image reference)
+          TAG=$(echo "$TAGS" | head -n1 | sed 's/.*://')
+          echo "Building with tag: $TAG"
+          
+          # Build and push with ko
+          IMAGE_DIGEST=$(ko build --tags="$TAG" --platform=all --base-import-paths ./cmd/sockeye)
+          echo "image-digest=$IMAGE_DIGEST" >> $GITHUB_OUTPUT
+          
+          # Generate release artifact
+          ko resolve --tags="$TAG" --platform=all --base-import-paths -f ./config/ > release.yaml
+
+      # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built.
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+          subject-digest: ${{ steps.push.outputs.image-digest }}
+          push-to-registry: true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release.yaml
+          draft: false
+          prerelease: false
